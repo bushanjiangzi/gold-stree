@@ -8,7 +8,7 @@
       <div class="storeRight">
         <div class="right_title">
           <span>分类排行</span>
-          <span>店铺排行</span>
+          <span>店铺排行 </span>
         </div>
       </div>
     </div>
