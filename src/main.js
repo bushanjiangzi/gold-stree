@@ -6,10 +6,16 @@ import router from './router'
 import './assets/css/reset.css'
 import 'element-ui/lib/theme-chalk/index.css'
 import ElementUI from 'element-ui'
+import Echarts from 'echarts'
+
+
 
 Vue.config.productionTip = false
+Vue.prototype.echarts = Echarts
 
 Vue.use(ElementUI)
+Vue.use(Echarts)
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

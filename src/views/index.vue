@@ -5,6 +5,57 @@
     </div>
     <div class="bottom">
       <div class="storeLeft">
+        <div v-show="activeName === 'one'">
+          <div class="pandect_top">
+            <div class="totalNum">
+              <img src="../../static/image/pandectImg/pandectImg1.png" alt="店铺总数">
+              <div>
+                <span class="pandect_top_name">店铺总数</span>
+                <span class="pandect_top_num">398</span>
+              </div>
+            </div>
+            <div class="hiredStore">
+              <el-progress type="circle" :stroke-width="6" :percentage="98" color="#03FFA9"></el-progress>
+              <div>
+                <span class="pandect_top_name">已租店铺</span>
+                <span class="pandect_top_num">344</span>
+              </div>
+            </div>
+            <div class="forRentStore">
+              <el-progress type="circle" :stroke-width="6" :percentage="2" color="#FF3600"></el-progress>
+              <div>
+                <span class="pandect_top_name">待租店铺</span>
+                <span class="pandect_top_num">54</span>
+              </div>
+            </div>
+          </div>
+          <div class="pandect_bottom">
+            <div class="chartBox">
+              <div class="chartBox_title">》已租店铺趋势图</div>
+              <el-select v-model="value1" placeholder="请选择">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+              <div id="lineChart1"></div>
+            </div>
+            <div class="chartBox">
+              <div class="chartBox_title">》待租店铺趋势图</div>
+              <el-select v-model="value2" placeholder="请选择">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+              <div id="lineChart2"></div>
+            </div>
+          </div>
+        </div>
         <div v-show="activeName === 'two'">
           <div class="numStatistics">
             <div>
@@ -55,7 +106,18 @@
       </div>
       <div class="storeRight">
         <el-tabs type="border-card" v-model="activeName" @tab-click="tabClick">
-        <!-- <el-tab-pane label="总览" name="one">总览</el-tab-pane> -->
+        <el-tab-pane label="总览" name="one">
+          <div class="pandectItem" v-for="(item, index) in pandectList" :key="index">
+            <div class="indexNum">{{index + 1}}</div>
+            <div class="storeName">{{item.name}}</div>
+            <div class="storeNum">店铺数量：{{item.num}}</div>
+            <div class="storePercent">{{item.percent}}</div>
+            <div v-show="item.icon">
+              <div v-if="item.iconName === 'yellow'" class="yellowIcon">↑</div>
+              <div v-else class="redIcon">↓</div>
+            </div>
+          </div>
+        </el-tab-pane>
         <el-tab-pane label="分类" name="two">
           <div class="classificationItem" v-for="(item, index) in classificationList" :key="index">
             <div class="indexNum">{{index + 1}}</div>
@@ -88,65 +150,124 @@
   </div>
 </template>
 <script>
+import Echarts from 'echarts'
 export default {
   name: 'store',
   data () {
     return {
-      activeName: 'two',
+      activeName: 'one',
+      pandectList: [
+        {
+          name: '餐馆',
+          num: 105,
+          percent: '30.5%',
+          icon: true,
+          iconName: 'yellow'
+        },
+        {
+          name: '快餐',
+          num: 76,
+          percent: '22%',
+          icon: true,
+          iconName: 'red'
+        },
+        {
+          name: '饮品',
+          num: 64,
+          percent: '18.6%',
+          icon: true,
+          iconName: 'yellow'
+        },
+        {
+          name: '风味小吃',
+          num: 42,
+          percent: '12.2%',
+          icon: false,
+          iconName: ''
+        },
+        {
+          name: '便利店',
+          num: 24,
+          percent: '6.7%',
+          icon: false,
+          iconName: ''
+        },
+        {
+          name: '服饰鞋帽',
+          num: 15,
+          percent: '4.4%',
+          icon: false,
+          iconName: ''
+        },
+        {
+          name: '美妆护理',
+          num: 10,
+          percent: '2.9%',
+          icon: false,
+          iconName: ''
+        },
+        {
+          name: '休闲娱乐',
+          num: 8,
+          percent: '2.3%',
+          icon: false,
+          iconName: ''
+        }
+      ],
       classificationList: [
         {
           name: '餐馆',
           src: '../../static/image/classification/classification1.png',
-          num: 13580,
+          num: 12420,
           icon: true,
           iconName: 'yellow'
         },
         {
           name: '快餐',
           src: '../../static/image/classification/classification2.png',
-          num: 15879,
+          num: 11053,
           icon: true,
           iconName: 'red'
         },
         {
           name: '饮品',
           src: '../../static/image/classification/classification3.png',
-          num: 15879,
+          num: 10062,
           icon: true,
           iconName: 'yellow'
         },
         {
           name: '风味小吃',
           src: '../../static/image/classification/classification4.png',
-          num: 13580,
+          num: 9451,
           icon: false,
           iconName: ''
         },
         {
           name: '便利店',
           src: '../../static/image/classification/classification5.png',
-          num: 13580,
+          num: 9423,
           icon: false,
           iconName: ''
         },
         {
           name: '服饰鞋帽',
           src: '../../static/image/classification/classification6.png',
-          num: 13580,
+          num: 8968,
           icon: false,
           iconName: ''
         },
         {
           name: '美妆护理',
           src: '../../static/image/classification/classification7.png',
-          num: 13580,
+          num: 8542,
           icon: false,
           iconName: ''
         },
         {
           name: '休闲娱乐',
           src: '../../static/image/classification/classification8.png',
-          num: 13580,
+          num: 7815,
           icon: false,
           iconName: ''
         }
@@ -154,58 +275,57 @@ export default {
       storeList: [
         {
           name: '星巴克',
-          num: 13580,
+          num: 11380,
           icon: true,
           iconName: 'yellow'
         },
         {
           name: '煌上煌',
-          num: 15879,
+          num: 10359,
           icon: true,
           iconName: 'red'
         },
         {
           name: '正新鸡排',
-          num: 15879,
+          num: 10135,
           icon: true,
           iconName: 'yellow'
         },
         {
           name: '庙东排骨',
-          num: 13580,
+          num: 8642,
           icon: false,
           iconName: ''
         },
         {
           name: '周黑鸭',
-          num: 13580,
+          num: 8355,
           icon: false,
           iconName: ''
         },
         {
           name: '必胜客',
-          num: 13580,
+          num: 7645,
           icon: false,
           iconName: ''
         },
         {
           name: '麦当劳',
-          num: 13580,
+          num: 7253,
           icon: false,
           iconName: ''
         },
         {
           name: '宝岛眼镜',
-          num: 13580,
+          num: 5500,
           icon: false,
           iconName: ''
         }
       ],
       storeImgList: [
         '../../static/image/storeImg/classificationImg1.png',
-        '../../static/image/storeImg/classificationImg1.png',
-        '../../static/image/storeImg/classificationImg1.png',
-        '../../static/image/storeImg/classificationImg1.png',
+        '../../static/image/storeImg/classificationImg2.png',
+        '../../static/image/storeImg/classificationImg3.png'
       ],
       storeImg: '',
       storeIntroduce: '',
@@ -242,11 +362,29 @@ export default {
           src: '../../static/image/storeImg/bdyj.png',
           introduce:'宝岛眼镜作为华人世界中眼镜界比较知名的品牌，拥有30多年历史，目前在亚洲的中国大陆、台湾分别开拓市场。其中，大陆拥有近1200家门店。一直以来，宝岛眼镜秉持着“用专业的心，做专业的事”理念，不断引进国外视光高科技产品，以及和国内重点高校合作，进行专业人才培训，并积极参与国家质量部门检测，落实高质量的商品分析，真正创造企业、高校和视光产业三方面纵横一体的零售企业。'
         }
+      ],
+      value1: '2',
+      value2: '2',
+      options: [
+        {
+          label: '2018',
+          value: '0'
+        },
+        {
+          label: '2019',
+          value: '1'
+        },
+        {
+          label: '2020',
+          value: '2'
+        }
       ]
     }
   },
   mounted () {
     this.storeItemClick(0)
+    this.getLine1Chart1()
+    this.getLine1Chart2()
   },
   methods: {
     tabClick (item) {
@@ -265,6 +403,152 @@ export default {
     },
     goback () {
       exit_app();
+    },
+    getLine1Chart1 () {
+      const options = {
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          axisTick: {
+            show: false
+          },
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: '#ccc'
+            }
+          },
+          axisLabel: {
+            show: true,
+            textStyle:{
+              color:'#fff',
+              fontSize: 12,
+            }
+          },
+          data: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
+        },
+        yAxis: {
+          type: 'value',
+          axisTick: {
+            show: false
+          },
+          axisLine: {
+            show: false
+          },
+          axisLabel: {
+            show: true,
+            textStyle:{
+              color:'#fff',
+              fontSize: 12,
+            }
+          },
+        },
+        grid: {
+          bottom: 20
+        },
+        series: [{
+            data: [110, 156, 300, 322, 330, 282, 300, 260, 320, 300, 315, 330],
+            type: 'line',
+            areaStyle: { normal: {} },
+            itemStyle: {
+              normal: {
+                //颜色渐变函数 前四个参数分别表示四个位置依次为左、下、右、上
+                color: {
+                  type: "linear",
+                  x: 0,
+                  y: 0,
+                  x2: 0,
+                  y2: 1,
+                  colorStops: [
+                    {
+                      offset: 0,
+                      color: "rgba(0, 255, 210, 1)" // 0% 处的颜色
+                    },
+                    {
+                      offset: 1,
+                      color: "rgba(0, 255, 240, 0)" // 100% 处的颜色
+                    }
+                  ],
+                  global: false // 缺省为 false
+                }, //背景渐变色
+              },
+            }
+        }]
+      }
+      Echarts.init(document.getElementById('lineChart1')).setOption(options)
+    },
+    getLine1Chart2 () {
+      const options = {
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          axisTick: {
+            show: false
+          },
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: '#ccc'
+            }
+          },
+          axisLabel: {
+            show: true,
+            textStyle:{
+              color:'#fff',
+              fontSize: 12,
+            }
+          },
+          data: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
+        },
+        yAxis: {
+          type: 'value',
+          axisTick: {
+            show: false
+          },
+          axisLine: {
+            show: false
+          },
+          axisLabel: {
+            show: true,
+            textStyle:{
+              color:'#fff',
+              fontSize: 12,
+            }
+          },
+        },
+        grid: {
+          bottom: 20
+        },
+        series: [{
+            data: [288, 242, 98, 76, 68, 116, 98, 138, 78, 98, 83, 68],
+            type: 'line',
+            areaStyle: { normal: {} },
+            itemStyle: {
+              normal: {
+                //颜色渐变函数 前四个参数分别表示四个位置依次为左、下、右、上
+                color: {
+                  type: "linear",
+                  x: 0,
+                  y: 0,
+                  x2: 0,
+                  y2: 1,
+                  colorStops: [
+                    {
+                      offset: 0,
+                      color: "rgba(0, 255, 210, 1)" // 0% 处的颜色
+                    },
+                    {
+                      offset: 1,
+                      color: "rgba(0, 255, 240, 0)" // 100% 处的颜色
+                    }
+                  ],
+                  global: false // 缺省为 false
+                }, //背景渐变色
+              },
+            }
+        }]
+      }
+      Echarts.init(document.getElementById('lineChart2')).setOption(options)
     }
   }
 }
@@ -328,6 +612,116 @@ export default {
 }
 .storeLeft>div{
   height: 100%;
+}
+.storeLeft .pandect_top{
+  padding: 125px 58px 0 79px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.storeLeft .pandect_top>div{
+  width: 288px;
+  height: 130px;
+  background:rgba(15,133,167,0.7);
+  border-radius: 10px;
+  padding: 40px 73px 40px 34px;
+}
+.storeLeft .pandect_top>div>div{
+  display: inline-block;
+  vertical-align: top;
+}
+.storeLeft .totalNum img{
+  width: 130px;
+  height: 130px;
+  display: inline-block;
+  margin-right: 34px;
+}
+.storeLeft .totalNum{
+  color: #fff;
+}
+.storeLeft .pandect_top .pandect_top_name{
+  font-size: 20px;
+  letter-spacing: 8px;
+  margin-top: 7px;
+  margin-bottom: 28px;
+  display: block;
+}
+.storeLeft .pandect_top .pandect_top_num{
+  font-size: 60px;
+  text-align: center;
+  display: block;
+}
+.storeLeft .pandect_top .hiredStore .el-progress--circle .el-progress__text{
+  font-size: 40px!important;
+  color: #03FFA9;
+}
+.storeLeft .pandect_top .forRentStore .el-progress--circle .el-progress__text{
+  font-size: 40px!important;
+  color: #FF3600;
+}
+.storeLeft .pandect_top .hiredStore>div:nth-child(2){
+  margin-left: 40px;
+  color: #fff;
+}
+.storeLeft .pandect_top .forRentStore>div:nth-child(2){
+  margin-left: 40px;
+  color: #fff;
+}
+.storeLeft .pandect_bottom{
+  padding: 83px 58px 150px 79px;
+  box-sizing: border-box;
+}
+.storeLeft .pandect_bottom .chartBox{
+  /* width: calc((100% - 40px) / 2); */
+  width: 48%;
+  height: 357px;
+  display: inline-block;
+  background: rgba(0,30,31,0.2);
+  border-radius:10px;
+  position: relative;
+}
+.storeLeft .pandect_bottom .chartBox:nth-child(1){
+  margin-right: 46px;
+}
+.storeLeft .pandect_bottom .chartBox .chartBox_title{
+  width: 360px;
+  height: 30px;
+  line-height: 30px;
+  color: #00FFF6;
+  margin-top: 28px;
+  padding-left: 10px;
+  background:linear-gradient(90deg,rgba(0,234,255,0.45),rgba(249,255,255,-0.2));
+}
+.storeLeft .pandect_bottom .chartBox .el-select{
+  position: absolute;
+  top: 65px;
+  right: 20px;
+}
+.storeLeft .pandect_bottom .chartBox .el-select>.el-input{
+  width: 90px;
+  height: 20px;
+  line-height: 20px;
+}
+.storeLeft .pandect_bottom .chartBox .el-input--suffix .el-input__icon{
+  height: 20px;
+  line-height: 20px;
+  color: #FFFFFF;
+}
+.storeLeft .pandect_bottom .chartBox .el-input--suffix .el-input__inner{
+  height: 20px;
+  line-height: 20px;
+  color: #FFFFFF;
+  background-color: rgba(0,30,31,0.2);
+  border:1px solid rgba(255,255,255,0.45);
+}
+#lineChart1{
+  width: 100%;
+  height: 300px;
+}
+#lineChart2{
+  width: 100%;
+  height: 300px;
 }
 .storeLeft .numStatistics{
   height: 126px;
@@ -425,8 +819,8 @@ export default {
 .storeRight .el-tabs--border-card>.el-tabs__header .el-tabs__nav{
   border:1px solid rgba(0,213,203,1);
   border-radius:10px;
-  /* margin-left: 53px; */
-  margin-left: 88px;
+  margin-left: 53px;
+  /* margin-left: 88px; */
 }
 .storeRight .el-tabs--border-card>.el-tabs__header .el-tabs__item.is-active{
   background-color: #00BBDD;
@@ -464,10 +858,21 @@ export default {
   height: calc(100% / 8);
   border-bottom: 1px solid #00D5CB;
 }
+.storeRight .pandectItem{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  /* padding: calc(100% / 14) 0 ; */
+  height: calc(100% / 8);
+  border-bottom: 1px solid #00D5CB;
+}
 .storeRight .el-tabs--border-card>.el-tabs__content>div>.classificationItem:last-child{
   border-bottom: 0;
 }
 .storeRight .el-tabs--border-card>.el-tabs__content>div>.storeItem:last-child{
+  border-bottom: 0;
+}
+.storeRight .el-tabs--border-card>.el-tabs__content>div>.pandectItem:last-child{
   border-bottom: 0;
 }
 .storeRight .storeItem.ClickActive .storeName{
@@ -492,12 +897,22 @@ export default {
   font-size: 20px;
   margin-right: 22px;
 }
+.storeRight .pandectItem .indexNum{
+  margin-right: 10px;
+}
 .storeRight .classificationItem .storeName{
   display: inline-block;
   color: #fff;
   font-size: 22px;
   width: 95px;
   margin-left: 20px;
+  margin-right: 20px;
+}
+.storeRight .pandectItem .storeName{
+  display: inline-block;
+  color: #fff;
+  font-size: 22px;
+  width: 90px;
   margin-right: 20px;
 }
 .storeRight .storeItem .storeName{
@@ -520,5 +935,12 @@ export default {
   display: inline-block;
   color: #fff;
   margin-right: 10px;
+}
+.storeRight .pandectItem .storeNum{
+  color: #fff;
+  margin-right: 10px;
+}
+.storeRight .pandectItem .storePercent{
+  color: #fff;
 }
 </style>
