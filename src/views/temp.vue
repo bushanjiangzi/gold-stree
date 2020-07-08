@@ -9,9 +9,11 @@
         <div class="content">
           <div class="content-left">
             <div class="img-box">
-              <img src="../assets/image/temp5.png">
+              <img class="tixing-img tixing-left" src="../assets/image/tixing.png">
+              <img class="tixing-img tixing-right" src="../assets/image/tixing.png">
+              <img src="../assets/image/temp2.png">
             </div>
-            <div class="temp-normal">体温：0</div>
+            <div class="temp-normal">体温：0℃</div>
           </div>
           <div class="content-right">
             <div class="progress-box">
@@ -49,20 +51,38 @@
               </div>
             </div>
             <div class="img-box">
+              <img src="../assets/image/arrow.png" class="arrow-img arrow-img-left">
+              <img src="../assets/image/arrow.png" class="arrow-img arrow-img-right">
               <div>
-                <img src="../assets/image/temp1.png">
+                <div class="img-relative">
+                  <img class="tixing-img tixing-left" src="../assets/image/tixing.png">
+                  <img class="tixing-img tixing-right" src="../assets/image/tixing.png">
+                  <img src="../assets/image/temp1.png">
+                </div>
                 <div class="temp">体温：0℃</div>
               </div>
               <div>
-                <img src="../assets/image/temp2.png">
+                <div class="img-relative">
+                  <img class="tixing-img tixing-left" src="../assets/image/tixing.png">
+                  <img class="tixing-img tixing-right" src="../assets/image/tixing.png">
+                  <img src="../assets/image/temp6.png">
+                </div>
                 <div class="temp">体温：0℃</div>
               </div>
               <div>
-                <img src="../assets/image/temp3.png">
+                <div class="img-relative">
+                  <img class="tixing-img tixing-left" src="../assets/image/tixing.png">
+                  <img class="tixing-img tixing-right" src="../assets/image/tixing.png">
+                  <img src="../assets/image/temp3.png">
+                </div>
                 <div class="temp">体温：0℃</div>
               </div>
               <div>
-                <img src="../assets/image/temp4.png">
+                <div class="img-relative">
+                  <img class="tixing-img tixing-left" src="../assets/image/tixing.png">
+                  <img class="tixing-img tixing-right" src="../assets/image/tixing.png">
+                  <img src="../assets/image/temp4.png">
+                </div>
                 <div class="temp">体温：0℃</div>
               </div>
             </div>
@@ -160,11 +180,29 @@ export default {
   text-align: center;
 }
 .store .bottom .store-box .content .content-left .img-box{
+  position: relative;
   width: 465px;
   height: 623px;
   border-radius: 10px;
   border: 1px solid #00FFE4;
-  overflow: hidden;
+  /* overflow: hidden; */
+}
+.store .bottom .store-box .content .content-left .img-box img{
+  width: 465px;
+  height: 623px;
+}
+.store .bottom .store-box .content .content-left .img-box .tixing-img{
+  position: absolute;
+  top: 420px;
+  width: 18px;
+  height: 98px;
+}
+.store .bottom .store-box .content .content-left .img-box .tixing-left{
+  transform: rotate(180deg);
+  left: -13px;
+}
+.store .bottom .store-box .content .content-left .img-box .tixing-right{
+  right: -13px;
 }
 .store .bottom .store-box .content .content-left .temp-normal{
   width: 412px;
@@ -205,10 +243,24 @@ export default {
   color: #fff;
 }
 .store .bottom .store-box .content .content-right .img-box{
+  position: relative;
   display: flex;
   justify-content: space-around;
   text-align: center;
   margin-top: 60px;
+}
+.store .bottom .store-box .content .content-right .img-box .arrow-img{
+  position: absolute;
+  top: 120px;
+  width: 25px;
+  height: 44px;
+}
+.store .bottom .store-box .content .content-right .img-box .arrow-img-left{
+  left: -20px;
+  transform: rotateZ(180deg);
+}
+.store .bottom .store-box .content .content-right .img-box .arrow-img-right{
+  right: -20px;
 }
 .store .bottom .store-box .content .content-right .img-box .temp{
   width: 216px;
@@ -225,5 +277,21 @@ export default {
 }
 .store .bottom .store-box .content .content-right .img-box .active{
   background: #FF1E27;
+}
+.store .bottom .store-box .content .content-right .img-box .img-relative {
+  position: relative;
+}
+.store .bottom .store-box .content .content-right .img-box .tixing-img{
+  position: absolute;
+  top: 220px;
+  width: 9px;
+  height: 47px;
+}
+.store .bottom .store-box .content .content-right .img-box .tixing-left{
+  transform: rotate(180deg);
+  left: 2px;
+}
+.store .bottom .store-box .content .content-right .img-box .tixing-right{
+  right: 2px;
 }
 </style>
