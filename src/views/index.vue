@@ -15,14 +15,14 @@
               </div>
             </div>
             <div class="hiredStore">
-              <el-progress type="circle" :stroke-width="6" :percentage="98" color="#03FFA9"></el-progress>
+              <el-progress type="circle" :stroke-width="6" :percentage="86.4" color="#03FFA9"></el-progress>
               <div>
                 <span class="pandect_top_name">已租店铺</span>
                 <span class="pandect_top_num">344</span>
               </div>
             </div>
             <div class="forRentStore">
-              <el-progress type="circle" :stroke-width="6" :percentage="2" color="#FF3600"></el-progress>
+              <el-progress type="circle" :stroke-width="6" :percentage="13.6" color="#FF3600"></el-progress>
               <div>
                 <span class="pandect_top_name">待租店铺</span>
                 <span class="pandect_top_num">54</span>
@@ -60,23 +60,28 @@
           <div class="numStatistics">
             <div>
               <div>店铺数量</div>
-              <div>259</div>
+              <div>0</div>
             </div>
             <div>
               <div>今日客流总量</div>
-              <div>560</div>
+              <div>0</div>
             </div>
             <div>
               <div>客流总量</div>
-              <div>13580</div>
+              <div>0</div>
             </div>
           </div>
           <div class="storeImg">
-            <el-carousel trigger="click" indicator-position="outside">
+            <!-- <el-carousel trigger="click" indicator-position="outside">
               <el-carousel-item v-for="(item, index) in storeImgList" :key="index">
                 <img :src="item" alt="">
               </el-carousel-item>
-            </el-carousel>
+            </el-carousel> -->
+            <div class="img-box">
+              <div v-for="(item, index) in logoList" :key="index">
+                <img :src="item.src" alt="" @click="logoClick(item)">
+              </div>
+            </div>
           </div>
           <div class="line1"></div>
           <div class="line2"></div>
@@ -85,20 +90,25 @@
           <div class="numStatistics">
             <div>
               <div>与上一天对比</div>
-              <div>20%<span class="yellow">↑</span></div>
+              <div>0%<span class="yellow">↑</span></div>
             </div>
             <div>
               <div>今日客流总量</div>
-              <div>560</div>
+              <div>0</div>
             </div>
             <div>
               <div>客流总量</div>
-              <div>13580</div>
+              <div>0</div>
             </div>
           </div>
           <div class="storeInfo">
             <img :src="storeImg" alt="店铺名称">
-            <div>{{storeIntroduce}}</div>
+            <div>
+              {{storeIntroduce}}
+            </div>
+            <div class="to-store">
+              <el-button type="primary" @click="toStore">前往</el-button>
+            </div>
           </div>
           <div class="line1"></div>
           <div class="line2"></div>
@@ -119,7 +129,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="分类" name="two">
-          <div class="classificationItem" v-for="(item, index) in classificationList" :key="index">
+          <div class="classificationItem" :class="classIndex === index ? 'active' : ''" v-for="(item, index) in classificationList" :key="index" @click="classificationClick(item, index)">
             <div class="indexNum">{{index + 1}}</div>
             <img :src="item.src" :alt="item.name">
             <div class="storeName">{{item.name}}</div>
@@ -151,6 +161,7 @@
 </template>
 <script>
 import Echarts from 'echarts'
+import logoInfo from '@/common/logoInfo'
 export default {
   name: 'store',
   data () {
@@ -159,57 +170,57 @@ export default {
       pandectList: [
         {
           name: '餐馆',
-          num: 105,
-          percent: '30.5%',
+          num: 0,
+          percent: '0',
           icon: true,
           iconName: 'yellow'
         },
         {
           name: '快餐',
-          num: 76,
-          percent: '22%',
+          num: 0,
+          percent: '0',
           icon: true,
           iconName: 'red'
         },
         {
           name: '饮品',
-          num: 64,
-          percent: '18.6%',
+          num: 0,
+          percent: '0',
           icon: true,
           iconName: 'yellow'
         },
         {
           name: '风味小吃',
-          num: 42,
-          percent: '12.2%',
+          num: 0,
+          percent: '0',
           icon: false,
           iconName: ''
         },
         {
           name: '便利店',
-          num: 24,
-          percent: '6.7%',
+          num: 0,
+          percent: '0',
           icon: false,
           iconName: ''
         },
         {
           name: '服饰鞋帽',
-          num: 15,
-          percent: '4.4%',
+          num: 0,
+          percent: '0',
           icon: false,
           iconName: ''
         },
         {
           name: '美妆护理',
-          num: 10,
-          percent: '2.9%',
+          num: 0,
+          percent: '0',
           icon: false,
           iconName: ''
         },
         {
           name: '休闲娱乐',
-          num: 8,
-          percent: '2.3%',
+          num: 0,
+          percent: '0',
           icon: false,
           iconName: ''
         }
@@ -218,56 +229,56 @@ export default {
         {
           name: '餐馆',
           src: '../../static/image/classification/classification1.png',
-          num: 12420,
+          num: 0,
           icon: true,
           iconName: 'yellow'
         },
         {
           name: '快餐',
           src: '../../static/image/classification/classification2.png',
-          num: 11053,
+          num: 0,
           icon: true,
           iconName: 'red'
         },
         {
           name: '饮品',
           src: '../../static/image/classification/classification3.png',
-          num: 10062,
+          num: 0,
           icon: true,
           iconName: 'yellow'
         },
         {
           name: '风味小吃',
           src: '../../static/image/classification/classification4.png',
-          num: 9451,
+          num: 0,
           icon: false,
           iconName: ''
         },
         {
           name: '便利店',
           src: '../../static/image/classification/classification5.png',
-          num: 9423,
+          num: 0,
           icon: false,
           iconName: ''
         },
         {
           name: '服饰鞋帽',
           src: '../../static/image/classification/classification6.png',
-          num: 8968,
+          num: 0,
           icon: false,
           iconName: ''
         },
         {
           name: '美妆护理',
           src: '../../static/image/classification/classification7.png',
-          num: 8542,
+          num: 0,
           icon: false,
           iconName: ''
         },
         {
           name: '休闲娱乐',
           src: '../../static/image/classification/classification8.png',
-          num: 7815,
+          num: 0,
           icon: false,
           iconName: ''
         }
@@ -275,49 +286,49 @@ export default {
       storeList: [
         {
           name: '星巴克',
-          num: 11380,
+          num: 0,
           icon: true,
           iconName: 'yellow'
         },
         {
           name: '煌上煌',
-          num: 10359,
+          num: 0,
           icon: true,
           iconName: 'red'
         },
         {
           name: '正新鸡排',
-          num: 10135,
+          num: 0,
           icon: true,
           iconName: 'yellow'
         },
         {
           name: '庙东排骨',
-          num: 8642,
+          num: 0,
           icon: false,
           iconName: ''
         },
         {
           name: '周黑鸭',
-          num: 8355,
+          num: 0,
           icon: false,
           iconName: ''
         },
         {
           name: '必胜客',
-          num: 7645,
+          num: 0,
           icon: false,
           iconName: ''
         },
         {
           name: '麦当劳',
-          num: 7253,
+          num: 0,
           icon: false,
           iconName: ''
         },
         {
           name: '宝岛眼镜',
-          num: 5500,
+          num: 0,
           icon: false,
           iconName: ''
         }
@@ -331,34 +342,42 @@ export default {
       storeIntroduce: '',
       storeInfoList: [  
         {
+          id: 'A1/A1_1',
           src: '../../static/image/storeImg/xbk.png',
           introduce:'星巴克(Starbucks)是美国一家连锁咖啡公司的名称，1971年成立，为全球最大的咖啡连锁店，其总部坐落美国华盛顿州西雅图市。星巴克旗下零售产品包括30多款全球顶级的咖啡豆、手工制作的浓缩咖啡和多款咖啡冷热饮料、新鲜美味的各式糕点食品以及丰富多样的咖啡机、咖啡杯等商品。星巴克在全球范围内已经有近21300间分店，遍布北美、南美洲、欧洲、中东及太平洋区。 2016年12月8日，星巴克与腾讯宣布战略合作关系，微信用户可以在内地所有星巴克门店使用微信支付。2018年8月2日，星巴克与阿里巴巴集团在上海宣布达成新零售全面战略合作。8月28日，星巴克与雀巢完成71.5亿美元授权协议，星巴克的包装咖啡及茶产品由雀巢行销全球。9月19日，星巴克试运营外卖咖啡。 2020年4月19日，针对星巴克“员工确诊新冠”，该员工已入院进行隔离治疗，门店已关店进行全面消毒。'
         },
         {
+          id: 'A6/A1_57 煌上煌',
           src: '../../static/image/storeImg/hsh.png',
           introduce:'江西煌上煌集团食品股份有限公司始创于1993年，总部座落在江西南昌，公司是一家集肉鸭养殖、屠宰加工、肉制品深加工、连锁销售、科研开发为一体的民营企业，2012年9月5日成功在深交所挂牌上市，成为酱卤肉制品行业第一个上市公司。公司在全国分布有6大现代化的食品生产加工基地，开发出6大系列，100多个产品，近4000家连锁专卖店分布在全国24个省份及直辖市。先后被列为全国农产品加工业示范基地、农业产业化国家重点龙头企业，是全国绿色食品示范企业、全国主食加工示范企业，国家高新技术企业，2017年入选中国制造业企业500强。'
         },
         {
+          id: 'B12/B1_79 正新鸡排',
           src: '../../static/image/storeImg/zxjp.png',
           introduce:'健康甘旨的鸡排是顾客所喜欢的，正新新世纪鸡排是顾客在繁忙了一天作业后卸下疲乏身驱的首选，慵懒的坐在客厅的沙发上，吃着喜欢的鸡排，听听舒缓的音乐，全身的脑细胞在这一刻得到放松。正新新世纪鸡排加盟总部专注做好鸡排，从事鸡排职业多年，具有一支具有办理，技能研制，运营办理才干的强壮专业团队。下设商场部，营销部，企划部，人事部，财务部，物流部，运营部等多个部分，完善的办理系统和专业的团队，为加盟商保驾护航，削减加盟上探索时刻躲避危险，到达以加盟商带动公司开展，公司扶持加盟商盈余的互利共赢形式，终究完成双赢。正新新世纪鸡排品牌作为正新新世纪鸡排研制加盟总部的重要品牌，一切加盟店肆实施一致装饰风格，选用精约风格装饰，交融当下潮流元素，打造共同店面规划风格，使其愈加具有特性，识别性高，让人过目不忘。'
         },
         {
+          id: 'A3/A1_25 庙东排骨',
           src: '../../static/image/storeImg/mdpg.png',
           introduce:'南京晨商箕食品有限公司的品牌创始人于2010年决定投身传统风味小吃开始，走访了全国30多个城市，尝遍了全国一百多种小吃。最终决定选择炸排骨作为研发并长期坚持的产品。于2014年初在南京市秦淮区创立了第一家直营店铺，并取名店名为«庙东排骨»。店铺开业初期即受到广大消费着的好评，生意火爆，随即连开两家直营店铺。2016年5月庙东排骨商标注册成功。2017年应广大消费者要求正式注册公司放开加盟，，从此解决了任何小餐饮品牌都无法比拟的货品安全与品质问题。三年的沉淀，只为夯实基础，为消费者提供一个健康，美味，持久的品牌。'
         },
         {
+          id: 'B1/B1_3 周黑鸭',
           src: '../../static/image/storeImg/zhy.png',
           introduce:'湖北周黑鸭食品工业园有限公司，是一家专门从事生产、营销及零售休闲熟卤制品企业，主营业务为卤鸭、鸭副产品，卤制红肉、卤制蔬菜、卤制家禽及水产类等其他产品。目前产品包装形式主要有气调保鲜包装、真空颗粒包装。“会娱乐更快乐”是周黑鸭的品牌理念。努力成为年轻、有活力兼具文化底蕴、生活品味的品牌是周黑鸭品牌目标。周黑鸭相信，可口、卫生、方便的产品，能够为消费者带来更大的乐趣和更好的体验。'
         },
         {
+          id: 'A8/A1_92 必胜客',
           src: '../../static/image/storeImg/ps.png',
           introduce:'以"红屋顶"作为餐厅外观显著标志的必胜客，如今已是全球最大的披萨专卖连锁企业之一，在遍布世界各地一百多个国家，每天接待超过400万位顾客，烤制170多万个比萨饼。必胜客已在营业额和餐厅数量上，迅速成为全球领先的比萨连锁餐厅企业。必胜客公司属于世界最大的餐饮集团-百胜全球餐饮集团，百胜餐饮集团在全球100多个国家拥有超过32,500家的连锁餐厅，是全球餐饮业多品牌集合的领导者。'
         },
         {
+          id: 'A1/A2_1',
           src: '../../static/image/storeImg/mdl.png',
           introduce:'50年代，麦当劳对餐厅进行了一次全新的升级。设计由美国设计师Stanley Meston亲自操刀，外墙使用了红白相间的线条，十分醒目。而为了让餐厅的屋顶结构显得更加饱满，设计师在餐厅的两边分别加入了一道金色抛物线，搭配上金色的霓虹灯，就这样，金色拱门正式诞生了。金色跳跃的双抛物线传递着动感和能量，英文里，这个醒目的标识被称为“Golden Arches”, 中文里叫“金色拱门”。以此为灵感，1961年，麦当劳的品牌Logo首次加入了“金色拱门”的元素，金色双抛物线化身成为金色的“M”标识。如今，“金色拱门”已成为了麦当劳的代名词，也成为了麦当劳品牌中最具象征性的标志。'
         },
         {
+          id: 'A1/A1_8',
           src: '../../static/image/storeImg/bdyj.png',
           introduce:'宝岛眼镜作为华人世界中眼镜界比较知名的品牌，拥有30多年历史，目前在亚洲的中国大陆、台湾分别开拓市场。其中，大陆拥有近1200家门店。一直以来，宝岛眼镜秉持着“用专业的心，做专业的事”理念，不断引进国外视光高科技产品，以及和国内重点高校合作，进行专业人才培训，并积极参与国家质量部门检测，落实高质量的商品分析，真正创造企业、高校和视光产业三方面纵横一体的零售企业。'
         }
@@ -378,8 +397,15 @@ export default {
           label: '2020',
           value: '2'
         }
-      ]
+      ],
+      classIndex: 0,
+      storeId: '',
+      logoList: []
     }
+  },
+  created () {
+    console.log(logoInfo)
+    this.logoList = logoInfo.cg
   },
   mounted () {
     this.storeItemClick(0)
@@ -400,6 +426,7 @@ export default {
       storeList[index].classList.add('ClickActive')
       this.storeImg = this.storeInfoList[index].src
       this.storeIntroduce = this.storeInfoList[index].introduce
+      this.storeId = this.storeInfoList[index].id
     },
     goback () {
       exit_app();
@@ -549,6 +576,46 @@ export default {
         }]
       }
       Echarts.init(document.getElementById('lineChart2')).setOption(options)
+    },
+    classificationClick (item, index) {
+      this.classIndex = index
+      // console.log(item)
+      switch(item.name) {
+        case '餐馆':
+          this.logoList = logoInfo.cg
+          break
+        case '快餐':
+          this.logoList = logoInfo.kc
+          break
+        case '饮品':
+          this.logoList = logoInfo.yp
+          break
+        case '风味小吃':
+          this.logoList = logoInfo.xc
+          break
+        case '便利店':
+          this.logoList = logoInfo.bl
+          break
+        case '服饰鞋帽':
+          this.logoList = logoInfo.fs
+          break
+        case '美妆护理':
+          this.logoList = logoInfo.hl
+          break
+        case '休闲娱乐':
+          this.logoList = logoInfo.yl
+          break
+        default:
+          this.logoList = logoInfo.cg
+      }
+    },
+    logoClick (item) {
+      console.log(item)
+      goto_shope(item.id)
+    },
+    toStore () {
+      console.log(this.storeId)
+      goto_shope(this.storeId)
     }
   }
 }
@@ -614,7 +681,7 @@ export default {
   height: 100%;
 }
 .storeLeft .pandect_top{
-  padding: 125px 58px 0 79px;
+  padding: 125px 0px 0 0px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -669,8 +736,12 @@ export default {
   color: #fff;
 }
 .storeLeft .pandect_bottom{
-  padding: 83px 58px 150px 79px;
+  /* padding: 83px 58px 150px 79px;
+  box-sizing: border-box; */
+  padding: 83px 0px 0px 0px;
   box-sizing: border-box;
+  display: flex;
+  justify-content: space-around;
 }
 .storeLeft .pandect_bottom .chartBox{
   /* width: calc((100% - 40px) / 2); */
@@ -745,12 +816,29 @@ export default {
   height: calc(100% - 10px);
   margin-top: 5px;
 }
+.storeLeft .storeImg .img-box {
+  display: flex;
+  justify-content: start;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+.storeLeft .storeImg .img-box div{
+  width: 16.6%;
+  text-align: center;
+  margin: 20px 0;
+}
+.storeLeft .storeImg .img-box div img{
+  width: 140px;
+  height: 140px;
+  margin: 0;
+}
 .storeLeft .storeInfo{
   height: calc(100% - 370px);
   padding: 78px 0 166px 0;
   display: flex;
   flex-direction: row;
   align-items: flex-start;
+  position: relative;
 }
 .storeLeft .storeInfo img{
   width: 407px;
@@ -764,6 +852,12 @@ export default {
   line-height: 35px;
   text-align: justify;
   color: #fff;
+}
+.storeLeft .storeInfo .to-store{
+  position: absolute;
+  bottom: 110px;
+  right: 10px;
+  width: 66px;
 }
 .storeLeft .el-carousel--horizontal{
   height: 100%;
@@ -849,6 +943,9 @@ export default {
   /* padding: calc(100% / 14) 0 ; */
   height: calc(100% / 8);
   border-bottom: 1px solid #00D5CB;
+}
+.storeRight .active{
+  background: #3d7a8c;
 }
 .storeRight .storeItem{
   display: flex;
