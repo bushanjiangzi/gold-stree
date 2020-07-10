@@ -167,7 +167,7 @@ export default {
         {
           name: '快餐',
           num: 76,
-          percent: '22%',
+          percent: '22.0%',
           icon: true,
           iconName: 'red'
         },
