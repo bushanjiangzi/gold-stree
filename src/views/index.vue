@@ -433,6 +433,17 @@ export default {
     },
     getLine1Chart1 () {
       const options = {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross',
+            label: {
+              color: '#000',
+              backgroundColor: '#00FFF6'
+            }
+          },
+          formatter: '{c}'
+        },
         xAxis: {
           type: 'category',
           boundaryGap: false,
@@ -456,11 +467,16 @@ export default {
         },
         yAxis: {
           type: 'value',
+          name: '个',
+          nameLocation: 'end',
           axisTick: {
             show: false
           },
           axisLine: {
-            show: false
+            show: false,
+            lineStyle: {
+              color: '#ccc'
+            }
           },
           axisLabel: {
             show: true,
@@ -471,6 +487,7 @@ export default {
           },
         },
         grid: {
+          top: 60,
           bottom: 20
         },
         series: [{
@@ -506,6 +523,17 @@ export default {
     },
     getLine1Chart2 () {
       const options = {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross',
+            label: {
+              color: '#000',
+              backgroundColor: '#00FFF6'
+            }
+          },
+          formatter: '{c}'
+        },
         xAxis: {
           type: 'category',
           boundaryGap: false,
@@ -529,11 +557,16 @@ export default {
         },
         yAxis: {
           type: 'value',
+          name: '个',
+          nameLocation: 'end',
           axisTick: {
             show: false
           },
           axisLine: {
-            show: false
+            show: false,
+            lineStyle: {
+              color: '#ccc'
+            }
           },
           axisLabel: {
             show: true,
@@ -720,11 +753,11 @@ export default {
   display: block;
 }
 .storeLeft .pandect_top .hiredStore .el-progress--circle .el-progress__text{
-  font-size: 40px!important;
+  font-size: 36px!important;
   color: #03FFA9;
 }
 .storeLeft .pandect_top .forRentStore .el-progress--circle .el-progress__text{
-  font-size: 40px!important;
+  font-size: 36px!important;
   color: #FF3600;
 }
 .storeLeft .pandect_top .hiredStore>div:nth-child(2){
@@ -768,6 +801,7 @@ export default {
   position: absolute;
   top: 65px;
   right: 20px;
+  z-index: 5;
 }
 .storeLeft .pandect_bottom .chartBox .el-select>.el-input{
   width: 90px;
