@@ -168,8 +168,9 @@
               </div>
               <input class="file-input" type="file" id='fileLogo' @change="upFileChange('logo')">
               <div v-show="isShowLogoHandle" class="preview-delete">
-                <i class="el-icon-zoom-in" @click="previewImg('logo')"></i>
-                <i class="el-icon-delete" @click="deleteImg('logo')"></i>
+                <i class="el-icon-zoom-in" @click="previewImg('logo')" title="预览"></i>
+                <img class="replace" src="../../../assets/image/replace.png" title="替换">
+                <i class="el-icon-delete" @click="deleteImg('logo')" title="删除"></i>
               </div>
             </div>
             <div class="add-logo add-img" @mouseenter="showImgHandle('img1')" @mouseleave="hideImgHandle">
@@ -182,8 +183,9 @@
               </div>
               <input class="file-input" type="file" id='fileImg1' @change="upFileChange('img1')">
               <div v-show="isShowImgHandle1" class="preview-delete preview-delete-min">
-                <i class="el-icon-zoom-in" @click="previewImg('img1')"></i>
-                <i class="el-icon-delete" @click="deleteImg('img1')"></i>
+                <i class="el-icon-zoom-in" @click="previewImg('img1')" title="预览"></i>
+                <img class="replace" src="../../../assets/image/replace.png" title="替换">
+                <i class="el-icon-delete" @click="deleteImg('img1')" title="删除"></i>
               </div>
             </div>
             <div class="add-logo add-img" @mouseenter="showImgHandle('img2')" @mouseleave="hideImgHandle">
@@ -196,8 +198,9 @@
               </div>
               <input class="file-input" type="file" id='fileImg2' @change="upFileChange('img2')">
               <div v-show="isShowImgHandle2" class="preview-delete preview-delete-min">
-                <i class="el-icon-zoom-in" @click="previewImg('img2')"></i>
-                <i class="el-icon-delete" @click="deleteImg('img2')"></i>
+                <i class="el-icon-zoom-in" @click="previewImg('img2')" title="预览"></i>
+                <img class="replace" src="../../../assets/image/replace.png" title="替换">
+                <i class="el-icon-delete" @click="deleteImg('img2')" title="删除"></i>
               </div>
             </div>
             <div class="add-logo add-img" @mouseenter="showImgHandle('img3')" @mouseleave="hideImgHandle">
@@ -210,8 +213,9 @@
               </div>
               <input class="file-input" type="file" id='fileImg3' @change="upFileChange('img3')">
               <div v-show="isShowImgHandle3" class="preview-delete preview-delete-min">
-                <i class="el-icon-zoom-in" @click="previewImg('img3')"></i>
-                <i class="el-icon-delete" @click="deleteImg('img3')"></i>
+                <i class="el-icon-zoom-in" @click="previewImg('img3')" title="预览"></i>
+                <img class="replace" src="../../../assets/image/replace.png" title="替换">
+                <i class="el-icon-delete" @click="deleteImg('img3')" title="删除"></i>
               </div>
             </div>
           </div>
@@ -688,6 +692,13 @@
 .store-box .dialog-center .left .add-logo .logo-img{
   width: 150px;
   height: 150px;
+}
+.store-box .dialog-center .left .add-logo .replace{
+  display: inline-block;
+  width: 21px;
+  height: 21px;
+  vertical-align: bottom;
+  margin-right: 6px;
 }
 .store-box .dialog-center .left .add-img {
   height: 76px;
