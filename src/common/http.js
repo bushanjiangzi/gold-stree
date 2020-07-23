@@ -16,6 +16,8 @@ function alertIntervalTime (msg) {
 // 对axios设置拦截器，判断sessionStorage.getItem('sn')是否存在
 axios.interceptors.request.use(
   config => {
+    // config.headers['x-forwarded-for'] = '10.10.9.77'
+    // config.headers['Content-Type'] = 'multipart/form-data'
     if (sessionStorage.getItem('sn')) {
       config.headers.Authentication = sessionStorage.getItem('sn')
     }
@@ -166,8 +168,8 @@ axios.interceptors.response.use((response) => {
         router.push({name: 'Login'})
         return
       case 500:
-        alertIntervalTime(error.response.data.msg)
-        return error
+        // alertIntervalTime(error.response.data.msg)
+        // return error
     }
     // 返回接口返回的错误信息
   }

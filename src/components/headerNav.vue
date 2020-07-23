@@ -32,10 +32,8 @@
   </div>
 </template>
 <script>
-import {User} from '../interface/interface'
-// import {Client} from '@/interface/3dRoamInterface'
+import { User } from '../interface/interface'
 import {get} from '@/common/http.js'
-// import popupBox from '@/components/popupBox'
 import Bus from '@/common/Bus'
 
 export default {
@@ -74,20 +72,16 @@ export default {
         case 'set':
           break
         case 'exit':
-          // User.exit({
-          //   params: {
-          //     id: sessionStorage.getItem('userId')
-          //   },
-          //   success: ({code, msg, data}) => {
-          //     this.$message.success('退出成功')
-          //     this.$router.push({name: '登录'})
-          //   },
-          //   error: (err) => {
-          //     console.log('error', err)
-          //   }
-          // })
-          // this.$message.success('退出成功')
-          this.$router.push({name: 'Login'})
+          User.logout({
+            params: {},
+            success: ({code, msg, data}) => {
+              this.$message.success('退出成功')
+              this.$router.push({name: 'Login'})
+            },
+            error: (err) => {
+              console.log('error', err)
+            }
+          })
           break
       }
     },

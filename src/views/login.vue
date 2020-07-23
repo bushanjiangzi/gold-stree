@@ -121,10 +121,8 @@ export default {
         if (valid) {
           User.login({
             params: {
-              phone: this.ruleForm.username,
-              password: CommonCryp.encrypt(this.ruleForm.password),
-              code: this.ruleForm.code,
-              timekey: this.date
+              username: this.ruleForm.username,
+              password: this.ruleForm.password
             },
             success: (res) => {
               sessionStorage.clear()
@@ -132,12 +130,8 @@ export default {
                 // this.getImgCode()
               } else {
                 localStorage.phone = this.ruleForm.username
-                sessionStorage.setItem('account', res.data.user.account)
                 sessionStorage.setItem('username', this.ruleForm.username)
-                sessionStorage.setItem('userId', res.data.user.id)
-                sessionStorage.setItem('flagType', '0')
-                sessionStorage.setItem('sn', res.data.token)
-                this.$router.push({name: '主页'})
+                this.$router.push({name: '管理'})
               }
             },
             error: (err) => {

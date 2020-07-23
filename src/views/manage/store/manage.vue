@@ -52,7 +52,7 @@
               label="序号"
               width="50">
               <template slot-scope="scope">
-                <span style="margin-left: 10px">{{ scope.row.index }}</span>
+                <span style="margin-left: 10px">{{ scope.row.shopId }}</span>
               </template>
             </el-table-column>
             <el-table-column
@@ -75,7 +75,7 @@
               label="类型"
               width="100">
               <template slot-scope="scope">
-                <span v-if="scope.row.state">{{ scope.row.type }}</span>
+                <span v-if="scope.row.state">{{ scope.row.typeName }}</span>
                 <span v-else>/</span>
               </template>
             </el-table-column>
@@ -83,14 +83,14 @@
               label="位置"
               width="100">
               <template slot-scope="scope">
-                <span>{{ scope.row.region }}</span>
+                <span>{{ scope.row.location.modleOperation }}</span>
               </template>
             </el-table-column>
             <el-table-column
               label="联系方式"
               width="120">
               <template slot-scope="scope">
-                <span v-if="scope.row.state">{{ scope.row.phone }}</span>
+                <span v-if="scope.row.state">{{ scope.row.relationPhone }}</span>
                 <span v-else>/</span>
               </template>
             </el-table-column>
@@ -98,7 +98,7 @@
               label="备注介绍"
               width="220">
               <template slot-scope="scope">
-                <span v-if="scope.row.state">{{ scope.row.introduce }}</span>
+                <span v-if="scope.row.state">{{ scope.row.desc }}</span>
                 <span v-else>/</span>
               </template>
             </el-table-column>
@@ -108,7 +108,7 @@
               <template slot-scope="scope">
                 <el-rate
                   v-if="scope.row.state"
-                  v-model="scope.row.grade"
+                  v-model="scope.row.score"
                   disabled
                   text-color="#ff9900">
                 </el-rate>
@@ -123,9 +123,10 @@
                   style="display: block"
                   v-model="scope.row.state"
                   active-color="#13ce66"
-                  inactive-color="#ff4949">
+                  inactive-color="#ff4949"
+                  @change="stateChange(scope.row)">
                 </el-switch>
-                <span v-if="scope.row.state" >已租</span>
+                <span v-if="scope.row.status" >已租</span>
                 <span v-else>未租</span>
               </template>
             </el-table-column>
@@ -281,263 +282,370 @@
 </template>
 
 <script>
-  export default {
-    data () {
-      return {
-        storeName: '',
-        region: '',
-        regionArr: [
-          {
-            label: 'A区',
-            value: '1'
+import { Admin } from '@/interface/interface'
+export default {
+  data () {
+    return {
+      storeName: '',
+      region: '',
+      regionArr: [
+        {
+          label: 'A区',
+          value: '1'
+        }
+      ],
+      regionIndex: '',
+      regionIndexArr: [
+        {
+          label: '001',
+          value: '1'
+        }
+      ],
+      storeType: '',
+      storeTypeArr: [
+        {
+          label: '小吃',
+          value: '1'
+        }
+      ],
+      storeState: '',
+      storeStateArr: [
+        {
+          label: '已租',
+          value: '1'
+        }
+      ],
+      tableData: [
+        {
+          shopId: 1,
+          icon: '../../../../static/image/1_cg/B1_21~爱撒椒.png',
+          name: '周黑鸭',
+          type: '小吃',
+          region: 'A区-001',
+          phone: '1111',
+          desc: '外婆菜又名万菜，是湖南湘西地区一道家常菜，原料选用大头菜、白萝卜',
+          grade: 4.5,
+          state: true
+        },
+        {
+          shopId: 2,
+          icon: '../../../../static/image/1_cg/B1_21~爱撒椒.png',
+          name: '周黑丫丫',
+          type: '小吃',
+          region: 'A区-002',
+          phone: '1111',
+          introduce: '周黑鸭，全称周黑鸭国际控股有限公司，股票代码01458，是一家专门从事生产、营销及零售休闲熟卤制品企业，主营业务为卤鸭、鸭副产品，卤制红肉、卤制蔬菜、卤制家禽及水产类等其他产品。',
+          grade: 5,
+          state: false
+        },
+        {
+          shopId: 1,
+          icon: '../../../../static/image/1_cg/B1_21~爱撒椒.png',
+          name: '周黑鸭',
+          type: '小吃',
+          region: 'A区-001',
+          phone: '1111',
+          introduce: '外婆菜又名万菜，是湖南湘西地区一道家常菜，原料选用大头菜、白萝卜',
+          grade: 4.5,
+          state: true
+        },
+        {
+          index: 2,
+          icon: '../../../../static/image/1_cg/B1_21~爱撒椒.png',
+          name: '周黑丫丫',
+          type: '小吃',
+          region: 'A区-002',
+          phone: '1111',
+          introduce: '周黑鸭，全称周黑鸭国际控股有限公司，股票代码01458，是一家专门从事生产、营销及零售休闲熟卤制品企业，主营业务为卤鸭、鸭副产品，卤制红肉、卤制蔬菜、卤制家禽及水产类等其他产品。',
+          grade: 5,
+          state: false
+        },
+        {
+          index: 1,
+          icon: '../../../../static/image/1_cg/B1_21~爱撒椒.png',
+          name: '周黑鸭',
+          type: '小吃',
+          region: 'A区-001',
+          phone: '1111',
+          introduce: '外婆菜又名万菜，是湖南湘西地区一道家常菜，原料选用大头菜、白萝卜',
+          grade: 4.5,
+          state: true
+        },
+        {
+          index: 2,
+          icon: '../../../../static/image/1_cg/B1_21~爱撒椒.png',
+          name: '周黑丫丫',
+          type: '小吃',
+          region: 'A区-002',
+          phone: '1111',
+          introduce: '周黑鸭，全称周黑鸭国际控股有限公司，股票代码01458，是一家专门从事生产、营销及零售休闲熟卤制品企业，主营业务为卤鸭、鸭副产品，卤制红肉、卤制蔬菜、卤制家禽及水产类等其他产品。',
+          grade: 5,
+          state: false
+        },
+        {
+          index: 1,
+          icon: '../../../../static/image/1_cg/B1_21~爱撒椒.png',
+          name: '周黑鸭',
+          type: '小吃',
+          region: 'A区-001',
+          phone: '1111',
+          introduce: '外婆菜又名万菜，是湖南湘西地区一道家常菜，原料选用大头菜、白萝卜',
+          grade: 4.5,
+          state: true
+        },
+        {
+          index: 2,
+          icon: '../../../../static/image/1_cg/B1_21~爱撒椒.png',
+          name: '周黑丫丫',
+          type: '小吃',
+          region: 'A区-002',
+          phone: '1111',
+          introduce: '周黑鸭，全称周黑鸭国际控股有限公司，股票代码01458，是一家专门从事生产、营销及零售休闲熟卤制品企业，主营业务为卤鸭、鸭副产品，卤制红肉、卤制蔬菜、卤制家禽及水产类等其他产品。',
+          grade: 5,
+          state: false
+        }
+      ],
+      newTableData: [],
+      prevTxt: '上一页',
+      nextTxt: '下一页',
+      currentPage: 1,
+      pageSize: 6,
+      total: 0,
+      dialogVisible: false,
+      dialogImageUrl: '',
+      imgPreviewdialog: false,
+      addImgUrl: '../../../assets/image/addImage.png',
+      isShowImg1: false,
+      isShowImg2: false,
+      isShowImg3: false,
+      isShowLogoImg: false,
+      logoImgUrl: '../../../../static/image/1_cg/B1_21~爱撒椒.png',
+      editInfo: {},
+      editStoreName: '',
+      editStoreType: '',
+      editRegion: '',
+      editRegionIndex: '',
+      editFloor: '',
+      editRate: null,
+      editIntroduce: '',
+      editPhone: '',
+      isShowLogoHandle: false,
+      isShowImgHandle1: false,
+      isShowImgHandle2: false,
+      isShowImgHandle3: false
+    }
+  },
+  created () {
+    this.getTypes()
+    this.getShowNums()
+    this.getAllShopList()
+  },
+  mounted () {
+    // this.total = this.tableData.length + 1
+    // this.getFistData()
+  },
+  methods: {
+    // 获取区域的所有店铺编号
+    getTypes () {
+      Admin.types({
+        params: {},
+        success: (res) => {
+          console.log(res)
+        }
+      })
+    },
+    // 获取店铺类型
+    getShowNums () {
+      Admin.showNums({
+        params: {
+          area: 'A1区'
+        },
+        success: (res) => {
+          console.log(res)
+        }
+      })
+    },
+    // 获取店铺列表
+    getAllShopList () {
+      this.tableData = []
+      Admin.allShop({
+        params: {},
+        success: (res) => {
+          // console.log(res)
+          if (res.dataList.length > 0) {
+            res.dataList.forEach( item => {
+              if (item.status === '1') {
+                item.state = true
+              } else {
+                item.state = false
+              }
+            })
+            this.tableData = res.dataList
+            this.total = res.dataList.length + 1
+            this.getFistData()
           }
-        ],
-        regionIndex: '',
-        regionIndexArr: [
-          {
-            label: '001',
-            value: '1'
+        }
+      })
+    },
+    search () {
+      console.log(this.storeName, this.region, this.regionIndex, this.storeType, this.storeState)
+    },
+    // 更改店铺状态
+    stateChange (info) {
+      if (info) {
+        console.log(info)
+        let state = '1'
+        if (info.status === '1') {
+          state = '2'
+        } else {
+          state = '1'
+        }
+        Admin.status({
+          params: {
+            id: info.shopId,
+            status: state
+          },
+          success: (res) => {
+            console.log(res)
+            this.getAllShopList()
           }
-        ],
-        storeType: '',
-        storeTypeArr: [
-          {
-            label: '小吃',
-            value: '1'
-          }
-        ],
-        storeState: '',
-        storeStateArr: [
-          {
-            label: '已租',
-            value: '1'
-          }
-        ],
-        tableData: [
-          {
-            index: 1,
-            icon: '../../../../static/image/1_cg/B1_21~爱撒椒.png',
-            name: '周黑鸭',
-            type: '小吃',
-            region: 'A区-001',
-            phone: '1111',
-            introduce: '外婆菜又名万菜，是湖南湘西地区一道家常菜，原料选用大头菜、白萝卜',
-            grade: 4.5,
-            state: true
-          },
-          {
-            index: 2,
-            icon: '../../../../static/image/1_cg/B1_21~爱撒椒.png',
-            name: '周黑丫丫',
-            type: '小吃',
-            region: 'A区-002',
-            phone: '1111',
-            introduce: '周黑鸭，全称周黑鸭国际控股有限公司，股票代码01458，是一家专门从事生产、营销及零售休闲熟卤制品企业，主营业务为卤鸭、鸭副产品，卤制红肉、卤制蔬菜、卤制家禽及水产类等其他产品。',
-            grade: 5,
-            state: false
-          },
-          {
-            index: 1,
-            icon: '../../../../static/image/1_cg/B1_21~爱撒椒.png',
-            name: '周黑鸭',
-            type: '小吃',
-            region: 'A区-001',
-            phone: '1111',
-            introduce: '外婆菜又名万菜，是湖南湘西地区一道家常菜，原料选用大头菜、白萝卜',
-            grade: 4.5,
-            state: true
-          },
-          {
-            index: 2,
-            icon: '../../../../static/image/1_cg/B1_21~爱撒椒.png',
-            name: '周黑丫丫',
-            type: '小吃',
-            region: 'A区-002',
-            phone: '1111',
-            introduce: '周黑鸭，全称周黑鸭国际控股有限公司，股票代码01458，是一家专门从事生产、营销及零售休闲熟卤制品企业，主营业务为卤鸭、鸭副产品，卤制红肉、卤制蔬菜、卤制家禽及水产类等其他产品。',
-            grade: 5,
-            state: false
-          },
-          {
-            index: 1,
-            icon: '../../../../static/image/1_cg/B1_21~爱撒椒.png',
-            name: '周黑鸭',
-            type: '小吃',
-            region: 'A区-001',
-            phone: '1111',
-            introduce: '外婆菜又名万菜，是湖南湘西地区一道家常菜，原料选用大头菜、白萝卜',
-            grade: 4.5,
-            state: true
-          },
-          {
-            index: 2,
-            icon: '../../../../static/image/1_cg/B1_21~爱撒椒.png',
-            name: '周黑丫丫',
-            type: '小吃',
-            region: 'A区-002',
-            phone: '1111',
-            introduce: '周黑鸭，全称周黑鸭国际控股有限公司，股票代码01458，是一家专门从事生产、营销及零售休闲熟卤制品企业，主营业务为卤鸭、鸭副产品，卤制红肉、卤制蔬菜、卤制家禽及水产类等其他产品。',
-            grade: 5,
-            state: false
-          },
-          {
-            index: 1,
-            icon: '../../../../static/image/1_cg/B1_21~爱撒椒.png',
-            name: '周黑鸭',
-            type: '小吃',
-            region: 'A区-001',
-            phone: '1111',
-            introduce: '外婆菜又名万菜，是湖南湘西地区一道家常菜，原料选用大头菜、白萝卜',
-            grade: 4.5,
-            state: true
-          },
-          {
-            index: 2,
-            icon: '../../../../static/image/1_cg/B1_21~爱撒椒.png',
-            name: '周黑丫丫',
-            type: '小吃',
-            region: 'A区-002',
-            phone: '1111',
-            introduce: '周黑鸭，全称周黑鸭国际控股有限公司，股票代码01458，是一家专门从事生产、营销及零售休闲熟卤制品企业，主营业务为卤鸭、鸭副产品，卤制红肉、卤制蔬菜、卤制家禽及水产类等其他产品。',
-            grade: 5,
-            state: false
-          }
-        ],
-        newTableData: [],
-        prevTxt: '上一页',
-        nextTxt: '下一页',
-        currentPage: 1,
-        pageSize: 6,
-        total: 0,
-        dialogVisible: false,
-        dialogImageUrl: '',
-        imgPreviewdialog: false,
-        addImgUrl: '../../../assets/image/addImage.png',
-        isShowImg1: false,
-        isShowImg2: false,
-        isShowImg3: false,
-        isShowLogoImg: false,
-        logoImgUrl: '../../../../static/image/1_cg/B1_21~爱撒椒.png',
-        editStoreName: '',
-        editStoreType: '',
-        editRegion: '',
-        editRegionIndex: '',
-        editFloor: '',
-        editRate: null,
-        editIntroduce: '',
-        editPhone: '',
-        isShowLogoHandle: false,
-        isShowImgHandle1: false,
-        isShowImgHandle2: false,
-        isShowImgHandle3: false
+        })
       }
     },
-    created () {
-
+    handleEdit (index, row) {
+      console.log(index, row)
+      this.editInfo = row
+      this.dialogVisible = true
+      this.editStoreName = row.name
+      this.editStoreType = row.typeName
+      this.editRegion = row.location.shopArea
+      this.editRegionIndex = row.location.shopNum
+      this.editFloor = row.location.shopLevel
+      this.editRate = row.score
+      this.editPhone = row.relationPhone
+      this.editIntroduce = row.desc
+      // console.log(window.innerHeight)
     },
-    mounted () {
-      this.total = this.tableData.length + 1
-      this.getFistData()
+    handleDelete (index, row) {
+      console.log(index, row);
     },
-    methods: {
-      search () {
-        console.log(this.storeName, this.region, this.regionIndex, this.storeType, this.storeState)
-      },
-      handleEdit (index, row) {
-        console.log(index, row)
-        this.dialogVisible = true
-        // console.log(window.innerHeight)
-      },
-      handleDelete (index, row) {
-        console.log(index, row);
-      },
-      // 点击首页
-      getFistData () {
-        this.currentPage = 1
-        this.infoPageList(1)
-      },
-      // 跳页
-      handleCurrentChange (currentPage) {
-        this.infoPageList(currentPage)
-      },
-      // 点击末页
-      getLastData () {
-        this.currentPage = Math.ceil(this.total / this.pageSize) === 0 ? 1 : Math.ceil(this.total / this.pageSize)
-        this.infoPageList(this.currentPage)
-      },
-      // 信息分页列表
-      infoPageList (page) {
-        let index = page - 1
-        this.newTableData = this.tableData.slice(index * this.pageSize, page * this.pageSize)
-      },
-      handleClose (done) {
-        this.$confirm('确认关闭？').then(_ => {
-          this.confirmClick()
-          done();
-        }).catch(_ => {});
-      },
-      confirmClick () {
-        console.log('已确认1')
-        this.dialogVisible = false
-      },
-      upFileChange (type) {
-        if (type === 'logo') {
-          let fileNode = document.getElementById('fileLogo')
-          this.isShowLogoImg = true
-          console.log(fileNode.files[0])
-        } else if (type === 'img1') {
-          let fileNode = document.getElementById('fileImg1')
-          this.isShowImg1 = true
-          console.log(fileNode.files[0])
-        } else if (type === 'img2') {
-          let fileNode = document.getElementById('fileImg2')
-          this.isShowImg2= true
-          console.log(fileNode.files[0])
-        } else if (type === 'img3') {
-          let fileNode = document.getElementById('fileImg3')
-          this.isShowImg3 = true
-          console.log(fileNode.files[0])
+    // 点击首页
+    getFistData () {
+      this.currentPage = 1
+      this.infoPageList(1)
+    },
+    // 跳页
+    handleCurrentChange (currentPage) {
+      this.infoPageList(currentPage)
+    },
+    // 点击末页
+    getLastData () {
+      this.currentPage = Math.ceil(this.total / this.pageSize) === 0 ? 1 : Math.ceil(this.total / this.pageSize)
+      this.infoPageList(this.currentPage)
+    },
+    // 信息分页列表
+    infoPageList (page) {
+      let index = page - 1
+      this.newTableData = this.tableData.slice(index * this.pageSize, page * this.pageSize)
+    },
+    handleClose (done) {
+      this.$confirm('确认关闭？').then(_ => {
+        this.confirmClick()
+        done();
+      }).catch(_ => {});
+    },
+    confirmClick () {
+      console.log('已确认1')
+      this.dialogVisible = false
+      console.log(this.editRate)
+    },
+    upFileChange (type) {
+      let files = null
+      let fileNode = null
+      let shopIndex = 0
+      if (type === 'logo') {
+        fileNode = document.getElementById('fileLogo')
+        // this.isShowLogoImg = true
+        shopIndex = 0
+        console.log(fileNode.files[0])
+      } else if (type === 'img1') {
+        fileNode = document.getElementById('fileImg1')
+        // this.isShowImg1 = true
+        shopIndex = 1
+        console.log(fileNode.files[0])
+      } else if (type === 'img2') {
+        fileNode = document.getElementById('fileImg2')
+        // this.isShowImg2= true
+        shopIndex = 2
+        console.log(fileNode.files[0])
+      } else if (type === 'img3') {
+        fileNode = document.getElementById('fileImg3')
+        // this.isShowImg3 = true
+        shopIndex = 3
+        console.log(fileNode.files[0])
+      }
+      files = fileNode.files[0]
+      console.log('files:', files)
+      let fielData = new FormData()
+      fielData.append('file', files)
+      fielData.append('shopId', '1')
+      fielData.append('shopIndex', this.editInfo.shopId)
+      console.log('fielData', fielData)
+      Admin.upload({
+        params: fielData,
+        success: (res) => {
+          console.log(res)
+        },
+        error: err => {
+          console.log(err)
         }
-      },
-      // 鼠标移入图片
-      showImgHandle (type) {
-        if (type === 'logo') {
-          this.isShowLogoHandle = true
-        } else if (type === 'img1') {
-          this.isShowImgHandle1 = true
-        } else if (type === 'img2') {
-          this.isShowImgHandle2 = true
-        } else if (type === 'img3') {
-          this.isShowImgHandle3 = true
+      })
+    },
+    // 鼠标移入图片
+    showImgHandle (type) {
+      if (this.editInfo.shopPictures.length < 1) {
+        return
+      }
+      if (type === 'logo') {
+        if (this.editInfo.shopPictures.length < 1) {
+          return
         }
-      },
-      // 鼠标移出图片
-      hideImgHandle () {
-        this.isShowLogoHandle = false
-        this.isShowImgHandle1 = false
-        this.isShowImgHandle2 = false
-        this.isShowImgHandle3 = false
-      },
-      // 预览图片
-      previewImg (type) {
-        this.imgPreviewdialog = true
-        if (type === 'logo') {
-        } else if (type === 'img1') {
-        } else if (type === 'img2') {
-        } else if (type === 'img3') {
-        }
-      },
-      // 删除图片
-      deleteImg (type) {
-        if (type === 'logo') {
-        } else if (type === 'img1') {
-          this.isShowImgHandle1 = true
-          this.isShowImgHandle2 = true
-        } else if (type === 'img3') {
-        }
+        this.isShowLogoHandle = true
+      } else if (type === 'img1') {
+        this.isShowImgHandle1 = true
+      } else if (type === 'img2') {
+        this.isShowImgHandle2 = true
+      } else if (type === 'img3') {
+        this.isShowImgHandle3 = true
+      }
+    },
+    // 鼠标移出图片
+    hideImgHandle () {
+      this.isShowLogoHandle = false
+      this.isShowImgHandle1 = false
+      this.isShowImgHandle2 = false
+      this.isShowImgHandle3 = false
+    },
+    // 预览图片
+    previewImg (type) {
+      this.imgPreviewdialog = true
+      if (type === 'logo') {
+      } else if (type === 'img1') {
+      } else if (type === 'img2') {
+      } else if (type === 'img3') {
+      }
+    },
+    // 删除图片
+    deleteImg (type) {
+      if (type === 'logo') {
+      } else if (type === 'img1') {
+        this.isShowImgHandle1 = true
+        this.isShowImgHandle2 = true
+      } else if (type === 'img3') {
       }
     }
   }
+}
 </script>
 
 <style scoped>
