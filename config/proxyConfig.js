@@ -1,4 +1,4 @@
-const target = 'http://10.10.9.77:8090' // 李像华本地
+const target = 'http://10.10.9.77:7090' // 李像华本地
 // const target = 'http://10.10.7.27:8090' // 测试环境
 
 module.exports = {

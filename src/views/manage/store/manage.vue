@@ -15,14 +15,17 @@
                 :value="item.value">
               </el-option>
             </el-select>
-            <el-select v-model="regionIndex" placeholder="">
+            <div class="region-index">
+              <el-input v-model="regionIndex" type="number" trigger-on-focus=false placeholder="店铺编号"></el-input>
+            </div>
+            <!-- <el-select v-model="regionIndex" placeholder="">
               <el-option
                 v-for="item in regionIndexArr"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value">
               </el-option>
-            </el-select>
+            </el-select> -->
             <span>类型</span>
             <el-select v-model="storeType" placeholder="请选择类型">
               <el-option
@@ -41,7 +44,8 @@
                 :value="item.value">
               </el-option>
             </el-select>
-            <el-button type="primary" @click="search">搜索</el-button>
+            <el-button type="primary" @click="searchClick">搜索</el-button>
+            <el-button type="primary" @click="createStore">新建</el-button>
         </div>
         <div class="table-box">
           <el-table
@@ -50,7 +54,7 @@
             style="width: 100%">
             <el-table-column
               label="序号"
-              width="50">
+              width="80">
               <template slot-scope="scope">
                 <span style="margin-left: 10px">{{ scope.row.shopId }}</span>
               </template>
@@ -59,8 +63,11 @@
               label="图标"
               width="100">
               <template slot-scope="scope">
-                <img v-if="scope.row.state" class="img-icon" :src='scope.row.icon'>
-                <img v-else src=''>
+                <div v-if="scope.row.imgUrl0">
+                  <img v-if="scope.row.state" class="img-icon" :src='scope.row.imgUrl0'>
+                  <img v-else class="img-icon" src='../../../assets/image/default.png'>
+                </div>
+                <img v-else class="img-icon" src='../../../assets/image/default.png'>
               </template>
             </el-table-column>
             <el-table-column
@@ -126,14 +133,15 @@
                   inactive-color="#ff4949"
                   @change="stateChange(scope.row)">
                 </el-switch>
-                <span v-if="scope.row.status" >已租</span>
+                <span v-if="scope.row.state" >已租</span>
                 <span v-else>未租</span>
               </template>
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <i v-if="scope.row.state" class="el-icon-document" @click="handleEdit(scope.$index, scope.row)"> 编辑</i>
-                <i v-else class="el-icon-document"> 编辑</i>
+                <i v-if="scope.row.state" class="" @click="handleEdit(scope.$index, scope.row)"> 编辑</i>
+                <i v-else class=""> 编辑</i>
+                <i class="" @click="deleteStore(scope.row)"> 删除</i>
               </template>
             </el-table-column>
           </el-table>
@@ -144,24 +152,22 @@
           @current-change="handleCurrentChange"
           :current-page="currentPage"
           :page-size="pageSize"
-          layout="prev, pager, next"
-          
+          layout="prev, pager, next, jumper"
           :total="total">
           </el-pagination>
-          <el-button size="small
-          " @click="getLastData" type="text">末页</el-button>
+          <el-button size="small" @click="getLastData" type="text">末页</el-button>
         </div>
       </div>
       <el-dialog
-        title="编辑"
+        :title="dialogTitle"
         :visible.sync="dialogVisible"
         width="730px"
         :before-close="handleClose">
         <div class="dialog-center">
-          <div class="left">
+          <div class="left" v-show="isEdit">
             <div class="add-logo" @mouseenter="showImgHandle('logo')" @mouseleave="hideImgHandle">
-              <div v-if='isShowLogoImg'>
-                <img class="logo-img" :src='logoImgUrl'>
+              <div v-if='editInfo.imgUrl0'>
+                <img class="logo-img" :src='editInfo.imgUrl0'>
               </div>
               <div v-else>
                 <img class="add-icon" src='../../../assets/image/addImage.png'>
@@ -170,13 +176,13 @@
               <input class="file-input" type="file" id='fileLogo' @change="upFileChange('logo')">
               <div v-show="isShowLogoHandle" class="preview-delete">
                 <i class="el-icon-zoom-in" @click="previewImg('logo')" title="预览"></i>
-                <img class="replace" src="../../../assets/image/replace.png" title="替换">
+                <img class="replace" src="../../../assets/image/replace.png" title="替换" @click="replaceClick('fileLogo')">
                 <i class="el-icon-delete" @click="deleteImg('logo')" title="删除"></i>
               </div>
             </div>
             <div class="add-logo add-img" @mouseenter="showImgHandle('img1')" @mouseleave="hideImgHandle">
-              <div v-if='isShowImg1'>
-                <img class="logo-img" :src='logoImgUrl'>
+              <div v-if='editInfo.imgUrl1'>
+                <img class="logo-img" :src='editInfo.imgUrl1'>
               </div>
               <div v-else>
                 <img class="add-icon" src='../../../assets/image/addImage.png'>
@@ -185,13 +191,13 @@
               <input class="file-input" type="file" id='fileImg1' @change="upFileChange('img1')">
               <div v-show="isShowImgHandle1" class="preview-delete preview-delete-min">
                 <i class="el-icon-zoom-in" @click="previewImg('img1')" title="预览"></i>
-                <img class="replace" src="../../../assets/image/replace.png" title="替换">
+                <img class="replace" src="../../../assets/image/replace.png" title="替换" @click="replaceClick('fileImg1')">
                 <i class="el-icon-delete" @click="deleteImg('img1')" title="删除"></i>
               </div>
             </div>
             <div class="add-logo add-img" @mouseenter="showImgHandle('img2')" @mouseleave="hideImgHandle">
-              <div v-if='isShowImg2'>
-                <img class="logo-img" :src='logoImgUrl'>
+              <div v-if='editInfo.imgUrl2'>
+                <img class="logo-img" :src='editInfo.imgUrl2'>
               </div>
               <div v-else>
                 <img class="add-icon" src='../../../assets/image/addImage.png'>
@@ -200,13 +206,13 @@
               <input class="file-input" type="file" id='fileImg2' @change="upFileChange('img2')">
               <div v-show="isShowImgHandle2" class="preview-delete preview-delete-min">
                 <i class="el-icon-zoom-in" @click="previewImg('img2')" title="预览"></i>
-                <img class="replace" src="../../../assets/image/replace.png" title="替换">
+                <img class="replace" src="../../../assets/image/replace.png" title="替换" @click="replaceClick('fileImg2')">
                 <i class="el-icon-delete" @click="deleteImg('img2')" title="删除"></i>
               </div>
             </div>
             <div class="add-logo add-img" @mouseenter="showImgHandle('img3')" @mouseleave="hideImgHandle">
-              <div v-if='isShowImg3'>
-                <img class="logo-img" :src='logoImgUrl'>
+              <div v-if='editInfo.imgUrl3'>
+                <img class="logo-img" :src='editInfo.imgUrl3'>
               </div>
               <div v-else>
                 <img class="add-icon" src='../../../assets/image/addImage.png'>
@@ -215,7 +221,7 @@
               <input class="file-input" type="file" id='fileImg3' @change="upFileChange('img3')">
               <div v-show="isShowImgHandle3" class="preview-delete preview-delete-min">
                 <i class="el-icon-zoom-in" @click="previewImg('img3')" title="预览"></i>
-                <img class="replace" src="../../../assets/image/replace.png" title="替换">
+                <img class="replace" src="../../../assets/image/replace.png" title="替换" @click="replaceClick('fileImg3')">
                 <i class="el-icon-delete" @click="deleteImg('img3')" title="删除"></i>
               </div>
             </div>
@@ -229,7 +235,7 @@
               <span>类&#8195;&#8195;型：</span>
               <el-select v-model="editStoreType" placeholder="请选择类型">
                 <el-option
-                  v-for="item in storeTypeArr"
+                  v-for="item in editTypeArr"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value">
@@ -239,16 +245,26 @@
             <div>
               <span>位&#8195;&#8195;置：</span>
               <div>
-                <el-select v-model="editRegion" disabled placeholder="请选择位置">
+                <el-select v-if='isEdit' v-model="editRegion" disabled placeholder="请选择位置"></el-select>
+                <el-select v-else v-model="editRegion" placeholder="请选择位置">
+                  <el-option
+                    v-for="item in editRegionList"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
                 </el-select>
-                <el-select v-model="editRegionIndex" disabled placeholder="">
-                </el-select>
+                <el-select v-if='isEdit' v-model="editRegionIndex" disabled placeholder="请输入店铺编号"></el-select>
+                <!-- <el-select v-else v-model="editRegionIndex" placeholder="请输入店铺编号"></el-select> -->
+                <el-input v-else style="margin-left: 10px;" v-model="editRegionIndex" type="number" trigger-on-focus=false placeholder="请输入店铺编号"></el-input>
               </div>
             </div>
             <div>
               <span>楼&#8195;&#8195;层：</span>
-              <el-select v-model="editFloor" disabled placeholder="请选择楼层">
-              </el-select>
+              <el-select v-if='isEdit' v-model="editFloor" disabled placeholder="请选择楼层"></el-select>
+              <!-- <el-select v-else v-model="editFloor" placeholder="请选择楼层">
+              </el-select> -->
+              <el-input v-else v-model="editFloor" type="number" trigger-on-focus=false placeholder="请输入楼层"></el-input>
             </div>
             <div>
               <span>评&#8195;&#8195;分：</span>
@@ -271,11 +287,21 @@
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="confirmClick">确 定</el-button>
+          <el-button type="primary" @click="confirmClick">保 存</el-button>
         </span>
       </el-dialog>
       <el-dialog :visible.sync="imgPreviewdialog">
         <img width="100%" :src="dialogImageUrl" alt="">
+      </el-dialog>
+      <el-dialog
+        title="提示"
+        :visible.sync="isShowdelete"
+        width="30%">
+        <span>确定删除吗？</span>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="isShowdelete = false">取 消</el-button>
+          <el-button type="primary" @click="deleteClick">确 定</el-button>
+        </span>
       </el-dialog>
     </div>
   </div>
@@ -294,6 +320,7 @@ export default {
           value: '1'
         }
       ],
+      editRegionList: [],
       regionIndex: '',
       regionIndexArr: [
         {
@@ -308,11 +335,20 @@ export default {
           value: '1'
         }
       ],
+      editTypeArr: [],
       storeState: '',
       storeStateArr: [
         {
+          label: '全部',
+          value: ''
+        },
+        {
           label: '已租',
           value: '1'
+        },
+        {
+          label: '未租',
+          value: '2'
         }
       ],
       tableData: [
@@ -409,17 +445,15 @@ export default {
       prevTxt: '上一页',
       nextTxt: '下一页',
       currentPage: 1,
-      pageSize: 6,
+      pageSize: 5,
       total: 0,
       dialogVisible: false,
       dialogImageUrl: '',
       imgPreviewdialog: false,
-      addImgUrl: '../../../assets/image/addImage.png',
       isShowImg1: false,
       isShowImg2: false,
       isShowImg3: false,
       isShowLogoImg: false,
-      logoImgUrl: '../../../../static/image/1_cg/B1_21~爱撒椒.png',
       editInfo: {},
       editStoreName: '',
       editStoreType: '',
@@ -432,10 +466,15 @@ export default {
       isShowLogoHandle: false,
       isShowImgHandle1: false,
       isShowImgHandle2: false,
-      isShowImgHandle3: false
+      isShowImgHandle3: false,
+      dialogTitle: '',
+      isEdit: false,
+      isShowdelete: false,
+      deleteStoreId: ''
     }
   },
   created () {
+    this.getAreas()
     this.getTypes()
     this.getShowNums()
     this.getAllShopList()
@@ -445,16 +484,44 @@ export default {
     // this.getFistData()
   },
   methods: {
-    // 获取区域的所有店铺编号
-    getTypes () {
-      Admin.types({
+    // 获取区域列表
+    getAreas () {
+      this.regionArr = []
+      this.editRegionList = []
+      Admin.areas({
         params: {},
         success: (res) => {
-          console.log(res)
+          res.dataList.forEach((item) => {
+            let areaObj = {}
+            areaObj.label = item
+            areaObj.value = item
+            this.regionArr.push(areaObj)
+            this.editRegionList.push(areaObj)
+          })
+          this.regionArr.unshift({label: '全部', value: ''})
         }
       })
     },
     // 获取店铺类型
+    getTypes () {
+      this.storeTypeArr = []
+      this.editTypeArr = []
+      Admin.types({
+        params: {},
+        success: (res) => {
+          console.log(res)
+          res.dataList.forEach((item) => {
+            let typeObj = {}
+            typeObj.value = item.id
+            typeObj.label = item.typeName
+            this.storeTypeArr.push(typeObj)
+            this.editTypeArr.push(typeObj)
+          })
+          this.storeTypeArr.unshift({value: '', label: '全部'})
+        }
+      })
+    },
+    // 获取区域的所有店铺编号
     getShowNums () {
       Admin.showNums({
         params: {
@@ -479,16 +546,63 @@ export default {
               } else {
                 item.state = false
               }
+              if (item.shopPictures.length > 0) {
+                item.shopPictures.forEach((element) => {
+                  let imgUrl = 'imgUrl' + element.shopPictureIndex
+                  item[imgUrl] = element.shopPicturePath + element.shopPictureName
+                })
+              }
             })
             this.tableData = res.dataList
-            this.total = res.dataList.length + 1
-            this.getFistData()
+            this.total = res.dataList.length
+            this.handleCurrentChange (this.currentPage)
+            // console.log('this.tableData:', this.tableData)
           }
         }
       })
     },
+    // 搜索
+    searchClick () {
+      this.currentPage = 1
+      this.search()
+    },
     search () {
-      console.log(this.storeName, this.region, this.regionIndex, this.storeType, this.storeState)
+      // console.log('search:', this.storeName, this.region, this.regionIndex, this.storeType, this.storeState)
+      Admin.search({
+        params: {
+          shopName: this.storeName,
+          shopType: this.storeType,
+          shopArea: this.region,
+          shopNum: this.regionIndex,
+          shopStatus: this.storeState
+        },
+        success: (res) => {
+          // console.log(res)
+          if (res.dataList.length > 0) {
+            res.dataList.forEach( item => {
+              if (item.status === '1') {
+                item.state = true
+              } else {
+                item.state = false
+              }
+              if (item.shopPictures.length > 0) {
+                item.shopPictures.forEach((element) => {
+                  let imgUrl = 'imgUrl' + element.shopPictureIndex
+                  item[imgUrl] = element.shopPicturePath + element.shopPictureName
+                })
+              }
+            })
+            console.log('this.currentPage:', this.currentPage)
+            this.tableData = res.dataList
+            this.total = res.dataList.length
+            // console.log('this.currentPage:', this.currentPage)
+            this.handleCurrentChange (this.currentPage)
+          }
+        },
+        error: (err) => {
+          console.log(err)
+        }
+      })
     },
     // 更改店铺状态
     stateChange (info) {
@@ -507,17 +621,46 @@ export default {
           },
           success: (res) => {
             console.log(res)
-            this.getAllShopList()
+            this.$message.success('店铺状态更新成功！')
+            this.search()
+          },
+          error: (err) => {
+            this.$message.error(err.msg)
           }
         })
       }
     },
+    // 新建店铺
+    createStore () {
+      this.isEdit = false
+      this.dialogTitle = '新建店铺'
+      this.editInfo = {}
+      this.dialogVisible = true
+      this.editStoreName = ''
+      this.editStoreType = 1
+      this.editRegion = ''
+      this.editRegionIndex = ''
+      this.editFloor = ''
+      this.editRate = 0
+      this.editPhone = ''
+      this.editIntroduce = ''
+    },
+    // 点击编辑
     handleEdit (index, row) {
-      console.log(index, row)
+      let typeId = 9
+      for (let item of this.storeTypeArr) {
+        if (item.label === row.typeName) {
+          typeId = item.value
+          break
+        }
+      }
+      this.isEdit = true
+      this.dialogTitle = '编辑店铺'
+      // console.log(index, row, typeId)
       this.editInfo = row
       this.dialogVisible = true
       this.editStoreName = row.name
-      this.editStoreType = row.typeName
+      this.editStoreType = typeId
       this.editRegion = row.location.shopArea
       this.editRegionIndex = row.location.shopNum
       this.editFloor = row.location.shopLevel
@@ -529,6 +672,26 @@ export default {
     handleDelete (index, row) {
       console.log(index, row);
     },
+    // 删除店铺信息
+    deleteStore (info) {
+      console.log('删除店铺信息', info)
+      this.isShowdelete = true
+      this.deleteStoreId = info.shopId
+    },
+    deleteClick () {
+      this.isShowdelete = false
+      Admin.delete({
+        id: this.deleteStoreId,
+        params: {},
+        success: res => {
+          this.$message.success(res.msg)
+          this.search()
+        },
+        error: err => {
+          this.$message.error(err.msg)
+        }
+      })
+    },
     // 点击首页
     getFistData () {
       this.currentPage = 1
@@ -536,6 +699,7 @@ export default {
     },
     // 跳页
     handleCurrentChange (currentPage) {
+      this.currentPage = currentPage
       this.infoPageList(currentPage)
     },
     // 点击末页
@@ -550,15 +714,80 @@ export default {
     },
     handleClose (done) {
       this.$confirm('确认关闭？').then(_ => {
-        this.confirmClick()
         done();
       }).catch(_ => {});
     },
+    // 确认保存
     confirmClick () {
-      console.log('已确认1')
-      this.dialogVisible = false
-      console.log(this.editRate)
+      console.log(this.isEdit)
+      // console.log('this.editStoreType:', this.editStoreType)
+      if (this.isEdit) {
+        Admin.shopSave({
+          params: {
+            id: this.editInfo.shopId,
+            typeId: this.editStoreType,
+            name: this.editStoreName,
+            relationPhone: this.editPhone,
+            desc: this.editIntroduce,
+            score: this.editRate
+          },
+          success: (res) => {
+            console.log(res)
+            this.$message.success('保存成功！')
+            this.search()
+            this.dialogVisible = false
+          },
+          error: (err) => {
+            console.log(err)
+            this.$message.error(err.msg)
+          }
+        })
+      } else {
+        // this.$message.success('添加成功！')
+        if (!this.editRegion) {
+          this.$message.warning('请选择区域！')
+          return
+        }
+        if (!this.editRegionIndex) {
+          this.$message.warning('请输入店铺编号！')
+          return
+        }
+        if (!this.editFloor) {
+          this.$message.warning('请填写楼层！')
+          return
+        }
+        let location = {}
+        location.shopArea = this.editRegion
+        location.shopNum = this.editRegionIndex
+        location.shopLevel = this.editFloor
+        let typeObj = null
+        for (let item of this.editTypeArr) {
+          if (item.value === this.editStoreType) {
+            typeObj = item
+          }
+        }
+        console.log(typeObj)
+        Admin.addStore({
+          params: {
+            typeName: typeObj.label,
+            name: this.editStoreName,
+            relatinPhone: this.editPhone,
+            desc: this.editIntroduce,
+            score: this.editRate,
+            location: location
+          },
+          success: res => {
+            this.$message.success(res.msg)
+            this.dialogVisible = false
+            this.search()
+          },
+          error: err => {
+            this.$message.error(err.msg)
+          }
+        })
+      }
     },
+    // 图片上传
     upFileChange (type) {
       let files = null
       let fileNode = null
@@ -588,35 +817,51 @@ export default {
       console.log('files:', files)
       let fielData = new FormData()
       fielData.append('file', files)
-      fielData.append('shopId', '1')
-      fielData.append('shopIndex', this.editInfo.shopId)
+      fielData.append('shopId', this.editInfo.shopId)
+      fielData.append('shopIndex', shopIndex)
       console.log('fielData', fielData)
       Admin.upload({
         params: fielData,
         success: (res) => {
           console.log(res)
+          if (res.code === '200') {
+            this.$message.success('图片上传成功！')
+            let imgUrl = 'imgUrl' + shopIndex
+            this.editInfo[imgUrl] = res.data
+          }
         },
-        error: err => {
+        error: (err) => {
           console.log(err)
+          this.$message.error(err.msg)
         }
       })
     },
     // 鼠标移入图片
     showImgHandle (type) {
-      if (this.editInfo.shopPictures.length < 1) {
-        return
-      }
       if (type === 'logo') {
-        if (this.editInfo.shopPictures.length < 1) {
-          return
+        if (this.editInfo.imgUrl0) {
+          this.isShowLogoHandle = true
+        } else {
+          this.isShowLogoHandle = false
         }
-        this.isShowLogoHandle = true
       } else if (type === 'img1') {
-        this.isShowImgHandle1 = true
+        if (this.editInfo.imgUrl1) {
+          this.isShowImgHandle1 = true
+        } else {
+          this.isShowImgHandle1 = false
+        }
       } else if (type === 'img2') {
-        this.isShowImgHandle2 = true
+        if (this.editInfo.imgUrl2) {
+          this.isShowImgHandle2 = true
+        } else {
+          this.isShowImgHandle2 = false
+        }
       } else if (type === 'img3') {
-        this.isShowImgHandle3 = true
+        if (this.editInfo.imgUrl3) {
+          this.isShowImgHandle3 = true
+        } else {
+          this.isShowImgHandle3 = false
+        }
       }
     },
     // 鼠标移出图片
@@ -630,10 +875,19 @@ export default {
     previewImg (type) {
       this.imgPreviewdialog = true
       if (type === 'logo') {
+        this.dialogImageUrl = this.editInfo.imgUrl0
       } else if (type === 'img1') {
+        this.dialogImageUrl = this.editInfo.imgUrl1
       } else if (type === 'img2') {
+        this.dialogImageUrl = this.editInfo.imgUrl2
       } else if (type === 'img3') {
+        this.dialogImageUrl = this.editInfo.imgUrl3
       }
+    },
+    // 图片替换
+    replaceClick (type) {
+      console.log(type)
+      document.getElementById(type).click()
     },
     // 删除图片
     deleteImg (type) {
@@ -681,6 +935,9 @@ export default {
   height: 32px;
   margin: 0 6px;
 }
+/deep/.store-box .content .search-box .region-index .el-input{
+  width: 100px;
+}
 /deep/.store-box .content .search-box .el-input .el-input__inner{
   height: 32px;
 }
@@ -715,6 +972,7 @@ export default {
 .store-box .content .table-box .img-icon{
   width: 70px;
   height: 70px;
+  border-radius: 50%;
 }
 .store-box .content .table-box .el-table span{
   font-size: 14px;
@@ -734,6 +992,15 @@ export default {
 }
 /deep/.store-box .content .table-box .el-table .el-icon-document:hover{
   cursor: pointer;
+}
+/deep/.store-box .content .table-box .el-table .cell:hover{
+  cursor: pointer;
+}
+/deep/.store-box .content .table-box .el-table .cell i{
+  margin-right: 12px;
+}
+/deep/.store-box .content .table-box .el-table .cell i:last-child{
+  color: red;
 }
 .store-box .content .page-box{
   display: flex;

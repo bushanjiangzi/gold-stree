@@ -23,7 +23,10 @@ let adminUrl = {
   shopSave: '/xianghua/admin/save', // 编辑保存商店信息
   detail: '/xianghua/admin/shop/', // 根据id查找店铺的详细信息
   status: '/xianghua/admin/status', // 更新店铺的状态信息
-  upload: '/xianghua/admin/file/upload' // 图片上传和替换
+  upload: '/xianghua/admin/file/upload', // 图片上传和替换
+  search: '/xianghua/admin/search', // 店铺搜索
+  addStore: '/xianghua/admin/insert', // 新增店铺
+  delete: '/xianghua/admin/delete/'
 }
 
 export const Admin = {
@@ -43,12 +46,21 @@ export const Admin = {
     post(adminUrl.shopSave, data.params).then(data.success).catch(data.error)
   },
   detail: function (data) {
-    post(adminUrl.detail + data.id, data.params).then(data.success).catch(data.error)
+    post(adminUrl.detail + data.id, {params: data.params}).then(data.success).catch(data.error)
   },
   status: function (data) {
     post(adminUrl.status, data.params).then(data.success).catch(data.error)
   },
   upload: function (data) {
     post(adminUrl.upload, data.params, {headers: {'Content-Type': 'multipart/form-data'}}).then(data.success).catch(data.error)
+  },
+  search: function (data) {
+    post(adminUrl.search, data.params).then(data.success).catch(data.error)
+  },
+  addStore: function (data) {
+    post(adminUrl.addStore, data.params).then(data.success).catch(data.error)
+  },
+  delete: function (data) {
+    get(adminUrl.delete + data.id, {params: data.params}).then(data.success).catch(data.error)
   }
 }
