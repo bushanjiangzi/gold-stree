@@ -6,6 +6,13 @@ let userUrl = {
   logout: '/xianghua/admin/manager/logout', // 退出登录
 }
 
+if (!isDev) {
+  for (let key in userUrl) {
+    userUrl[key] = userUrl[key].replace('/xianghua', '')
+    console.log(userUrl[key])
+  }
+}
+
 export const User = {
   login: function (data) {
     post(userUrl.login, data.params).then(data.success).catch(data.error)
@@ -26,7 +33,15 @@ let adminUrl = {
   upload: '/xianghua/admin/file/upload', // 图片上传和替换
   search: '/xianghua/admin/search', // 店铺搜索
   addStore: '/xianghua/admin/insert', // 新增店铺
-  delete: '/xianghua/admin/delete/'
+  delete: '/xianghua/admin/delete/', // 删除店铺信息
+  deleteImg: '/xianghua/admin/file/delete' // 删除照片
+}
+
+if (!isDev) {
+  for (let key in adminUrl) {
+    adminUrl[key] = adminUrl[key].replace('/xianghua', '')
+    console.log(adminUrl[key])
+  }
 }
 
 export const Admin = {
@@ -62,5 +77,8 @@ export const Admin = {
   },
   delete: function (data) {
     get(adminUrl.delete + data.id, {params: data.params}).then(data.success).catch(data.error)
+  },
+  deleteImg: function (data) {
+    post(adminUrl.deleteImg, data.params).then(data.success).catch(data.error)
   }
 }

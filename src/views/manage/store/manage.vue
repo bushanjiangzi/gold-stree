@@ -828,6 +828,8 @@ export default {
             this.$message.success('图片上传成功！')
             let imgUrl = 'imgUrl' + shopIndex
             this.editInfo[imgUrl] = res.data
+            this.search()
+            this.dialogVisible = false
           }
         },
         error: (err) => {
@@ -891,12 +893,48 @@ export default {
     },
     // 删除图片
     deleteImg (type) {
+      console.log('删除图片：', this.editInfo)
+      let imgIndex = ''
+      let imgId = ''
       if (type === 'logo') {
+        imgIndex = 0
       } else if (type === 'img1') {
         this.isShowImgHandle1 = true
+        imgIndex = 1
+      } else if (type === 'img2') {
         this.isShowImgHandle2 = true
+        imgIndex = 2
       } else if (type === 'img3') {
+        this.isShowImgHandle3 = true
+        imgIndex = 3
       }
+      console.log(imgIndex)
+      for (let item of this.editInfo.shopPictures) {
+        if (imgIndex === item.shopPictureIndex) {
+          imgId = item.id
+          break
+        }
+      }
+      if (imgId === '') {
+        this.$message.warning('没有可以删除的图片！')
+        return
+      }
+      Admin.deleteImg({
+        params: {
+          id: imgId
+        },
+        success: (res) => {
+          console.log(res)
+          this.$message.success(res.msg)
+          this.search()
+          this.dialogVisible = false
+          // this.editInfo['imgUrl' + imgIndex] = ''
+        },
+        error: (err) => {
+          console.log(err.msg)
+          this.$message.error(err.msg)
+        }
+      })
     }
   }
 }

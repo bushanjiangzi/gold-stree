@@ -18,8 +18,8 @@ Vue.use(ElementUI)
 Vue.use(Echarts)
 
 const devObj = {
-  interfaceUrl: 'http://10.10.7.27:8090' // 晓娴整合后本地路径
-  // interfaceUrl: 'http://10.10.9.77:8090' // 李像华本地
+  // interfaceUrl: 'http://10.10.7.27:8090' // 晓娴整合后本地路径
+  interfaceUrl: 'http://10.10.9.77:8090' // 李像华本地
 }
 const proObj = {
   interfaceUrl: 'http://139.9.26.115:8090' // 生产环境路径
