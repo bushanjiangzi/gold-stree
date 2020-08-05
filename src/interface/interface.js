@@ -9,7 +9,7 @@ let userUrl = {
 if (!isDev) {
   for (let key in userUrl) {
     userUrl[key] = userUrl[key].replace('/xianghua', '')
-    console.log(userUrl[key])
+    // console.log(userUrl[key])
   }
 }
 
@@ -40,7 +40,7 @@ let adminUrl = {
 if (!isDev) {
   for (let key in adminUrl) {
     adminUrl[key] = adminUrl[key].replace('/xianghua', '')
-    console.log(adminUrl[key])
+    // console.log(adminUrl[key])
   }
 }
 

@@ -16,7 +16,7 @@
               </el-option>
             </el-select>
             <div class="region-index">
-              <el-input v-model="regionIndex" type="number" trigger-on-focus=false placeholder="店铺编号"></el-input>
+              <el-input v-model="regionIndex" type="number" trigger-on-focus=false placeholder="位置编号"></el-input>
             </div>
             <!-- <el-select v-model="regionIndex" placeholder="">
               <el-option
@@ -554,10 +554,10 @@ export default {
               }
             })
             this.tableData = res.dataList
-            this.total = res.dataList.length
-            this.handleCurrentChange (this.currentPage)
             // console.log('this.tableData:', this.tableData)
           }
+          this.total = res.dataList.length
+          this.handleCurrentChange (this.currentPage)
         }
       })
     },
@@ -568,6 +568,7 @@ export default {
     },
     search () {
       // console.log('search:', this.storeName, this.region, this.regionIndex, this.storeType, this.storeState)
+      this.tableData = []
       Admin.search({
         params: {
           shopName: this.storeName,
@@ -594,10 +595,10 @@ export default {
             })
             console.log('this.currentPage:', this.currentPage)
             this.tableData = res.dataList
-            this.total = res.dataList.length
-            // console.log('this.currentPage:', this.currentPage)
-            this.handleCurrentChange (this.currentPage)
           }
+          this.total = res.dataList.length
+          // console.log('this.currentPage:', this.currentPage)
+          this.handleCurrentChange (this.currentPage)
         },
         error: (err) => {
           console.log(err)

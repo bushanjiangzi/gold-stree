@@ -43,13 +43,14 @@ axios.interceptors.response.use((response) => {
     switch (error.response.data.status) {
       // 返回401，清除token信息并跳转到登录页面
       case 401:
-        sessionStorage.clear()
         alertIntervalTime('登录超时, 请重新登录')
         router.push({name: 'Login'})
         return
       case 500:
         alertIntervalTime(error.response.data.message)
-        router.push({name: 'Login'})
+        if (error.response.data.message.indexOf('登录') > 0) {
+          router.push({name: 'Login'})
+        }
         // return error
     }
     // 返回接口返回的错误信息
